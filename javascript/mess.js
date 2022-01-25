@@ -12,6 +12,8 @@ const obstacles=[]
 
 let requestId;
 
+let weapons = [];
+
 
 //SECCION DE CLASES
 
@@ -40,7 +42,7 @@ class City{
         this.width = canvas.width;
         this.height = 510;
         this.image = new Image();
-        this.image.src = "../assets/images/ciudad.png"
+        this.image.src = "/assets/images/ciudad.png"
     }
     // Metodos
     draw(){
@@ -55,7 +57,7 @@ class House {
         this.width = 190 ;
         this.height = 190;
         this.image = new Image();
-        this.image.src = "../assets/images/casa.png"
+        this.image.src = "/assets/images/casa.png"
     }
     draw() {
         this.y --;
@@ -74,7 +76,7 @@ class Lineas {
         this.width = canvas.width;
         this.height = 700;
         this.image = new Image();
-        this.image.src = "../assets/images/lineas.png"
+        this.image.src = "/assets/images/lineas.png"
     }
     // Metodos
     draw() {
@@ -100,7 +102,7 @@ class Bike {
         this.width = w;
         this.height = h;
         this.image = new Image();
-        this.image.src = "../assets/images/charone.png"
+        this.image.src = "/assets/images/charone.png"
     }
 
     //Metodos
@@ -142,7 +144,46 @@ class Obstacles {
   }
 }
 
+class Weapons {
+  constructor (x,y){
+    this.x = x;
+    this.y = y;
+    this.width = 100;
+    this.height = 100;
+    this.image = new Image();
+    this.image.src = "/assets/images/tool.png"
+  }
+  draw(){
+    if(frames % 10 === 0){
+      this.y -= 19;
+    };
+    ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
+  }
+}
 
+// class Bottles {
+//   constructor(x,y,w,h,img){
+//     this.x = x;
+//     this.y = y;
+//     this.width = w;
+//     this.height = h;
+//     this.image = new Image();
+//     this.image.src = "/assets/images/agua.png";
+//   }
+//    // metodos
+//   draw(){
+//     this.y += 2
+//     ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+//   }
+//   collision(item){
+//     return(
+//       this.x < item.x + item.width &&
+//       this.x + this.width > item.x &&
+//       this.y < item.y + item.height &&
+//       this.y + this.height > item.y
+//     )
+//   }
+// }
 
 
 // seccion de instancias
@@ -166,8 +207,6 @@ function generateObstacles(){
   }
 }
 
-// x,y,w,h,img
-
 function drawObstacles(){
   obstacles.forEach((obstacle, index_obstacle) =>{
     obstacle.draw();
@@ -176,8 +215,29 @@ function drawObstacles(){
       requestID = undefined;
       // fondo.gameOver();
     }
+
+    weapons.forEach((weapon, index_weapon) => {
+      weapon.draw();
+      if(obstacle.collision(weapon)){
+        obstacles.splice(index_obstacle,1);
+        weapons.splice(index_weapon,1);
+      }
+      //sacar el arma si sale del canvas
+      if(weapon.y + weapon.height <= 0){
+        weapons.pop();
+      }
+    })
+
+    //sacar los obstaculos cuando ya no están en el canvas
+    if (obstacle.y + obstacle.height >= 1350){
+      obstacles.splice(index_obstacle, 1);
+    }
   })
 }
+
+// function generateBottles(){
+
+// }
 
 function updateCanvas() {
     frames++;
@@ -205,14 +265,18 @@ function updateCanvas() {
     if(event.keyCode === 65){
       if (bike.x > 100){
         bike.x -=15  
-      }
-      
+      }   
     }
+
     if(event.keyCode === 68){
       if (bike.x < 560){
         bike.x +=15  
       }
-      
+    }
+
+    if(event.keyCode === 32){
+      const weapon = new Weapons(bike.x, bike.y)
+      weapons.push(weapon)
     }
   
   })
