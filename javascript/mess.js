@@ -121,3 +121,22 @@ function updateCanvas() {
 
   updateCanvas()
 
+
+  // Event listener
+
+  addEventListener('keydown', (event) =>{
+ 
+    if(event.keyCode === 65){
+      if (bike.x > 100){
+        bike.x -=15  
+      }
+      
+    }
+    if(event.keyCode === 68){
+      if (bike.x < 560){
+        bike.x +=15  
+      }
+      
+    }
+  
+  })
