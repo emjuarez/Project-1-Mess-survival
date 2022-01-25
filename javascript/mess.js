@@ -30,14 +30,33 @@ class City{
         this.x = 0;
         this.y = 0;
         this.width = canvas.width;
-        this.height = 1046;
+        this.height = 510;
         this.image = new Image();
-        this.image.src = "../assets/images/fondo.png"
+        this.image.src = "../assets/images/ciudad.png"
     }
     // Metodos
     draw(){
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height) 
     }
+}
+
+class House {
+    constructor(){
+        this.x = 340;
+        this.y = 1010;
+        this.width = 190 ;
+        this.height = 190;
+        this.image = new Image();
+        this.image.src = "../assets/images/casa.png"
+    }
+    draw() {
+        this.y --;
+        if(this.y < 319) {
+          this.y =319;
+        }
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+      }
+
 }
 
 class Lineas {
@@ -50,25 +69,21 @@ class Lineas {
         this.image.src = "../assets/images/lineas.png"
     }
     // Metodos
-    draw(){
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height) 
-    }
+    draw() {
+        this.y ++;
+        if(this.y > canvas.height) {
+          this.y =502;
+        }
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        ctx.drawImage(
+          this.image,
+          this.x ,
+          this.y - this.height, //coloca la imagen seguida de la primera
+          this.width,
+          this.height
+      )
+      }
 }
-
-// class Bike {
-//     constructor(){
-//         this.x = 310;
-//         this.y = 1070;
-//         this.width = 180;
-//         this.height = 135;
-//         this.image = new Image();
-//         this.image.src = "../assets/images/charone.png"
-//     }
-//     // Metodos
-//     draw(){
-//         ctx.drawImage(this.image, this.x, this.y, this.width, this.height) 
-//     }
-// }
 
 class Bike {
     constructor(x,y,w,h){
@@ -102,20 +117,21 @@ const piso = new Piso()
 const city = new City()
 const lines = new Lineas()
 const bike = new Bike(340, 1011, 135,180)
-
+const house = new House()
 
 // funciones
 
 function updateCanvas() {
     frames++;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    city.draw()
     piso.draw()
     lines.draw()
+    city.draw()
     bike.draw()
-    // if(requestId){
-    //   requestId = requestAnimationFrame(updateCanvas)
-    // }   
+    house.draw()
+    if(requestId){
+      requestId = requestAnimationFrame(updateCanvas)
+    }   
     requestAnimationFrame(updateCanvas)
   }
 
