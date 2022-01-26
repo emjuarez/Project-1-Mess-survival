@@ -6,6 +6,7 @@ const buttonStart = document.getElementById("play")
 //Variables globales
 let frames = 0;
 let requestID;
+
 const imageObstacles = [
   "/assets/images/carone.png",
   "/assets/images/cartwo.png",
@@ -23,6 +24,9 @@ const bottles = []
 
 const imageHoles = [ "/assets/images/hole.png" ]
 const holes = []
+
+const imageFood = ["/assets/images/burger.png"]
+const burgers = []
 
 //SECCION DE CLASES
 
@@ -60,7 +64,7 @@ class City{
     gameOver() {
         ctx.drawImage(this.image2, 100, 100, 570, 350)
         }
-    delivered(){
+    win(){
         ctx.drawImage(this.image3, 100, 100, 570, 350)
     }
 
@@ -114,6 +118,7 @@ class Bike {
         this.width = w;
         this.height = h;
         this.life = 3
+        this.hungry = 0
         this.image = new Image();
         this.image.src = "/assets/images/charone.png"
     }
@@ -200,6 +205,12 @@ class Recovery {
   }
 }
 
+class Food extends Recovery{
+  constructor(x,y,w,h,img){
+    super(x,y,w,h,img)
+  }
+}
+
 // seccion de instancias
 
 const piso = new Piso()
@@ -249,7 +260,7 @@ function drawObstacles(){
 }
 
 function generateBottles(){
-  if (frames % 1737 === 0){
+  if (frames % 1307 === 0){
     let x = Math.floor(Math.random() * (740 - 140) + 10);
     let imgRand = Math.floor(Math.random() * imageRecovery.length);
     const bottle = new Recovery(x, 400,70,150 ,imageRecovery[imgRand]);
@@ -274,7 +285,7 @@ function drawBottles(){
 }
 
 function generateHoles(){
-  if (frames % 200 === 0){
+  if (frames % 700 === 0){
     let x = Math.floor(Math.random() * (740 - 140) + 10);
     let imgRand = Math.floor(Math.random() * imageHoles.length);
     const hole = new Holes(x, 400,150,90 ,imageHoles[imgRand]);
@@ -288,7 +299,7 @@ function drawHoles(){
     if(bike.collision(hole)){
       console.log("ouch");
       holes.splice(index_hole,1);
-      bike.life -= 4;
+      bike.life -= 2;
       console.log(bike.life)
       // requestID = undefined;
       // fondo.gameOver();
@@ -299,27 +310,91 @@ function drawHoles(){
     }
   })
 }
+
+function generateBurgers(){
+  if (frames % 1307 === 0){
+    let x = Math.floor(Math.random() * (740 - 140) + 10);
+    let imgRand = Math.floor(Math.random() * imageFood.length);
+    const burger = new Food(x, 400,100,100 ,imageFood[imgRand]);
+    burgers.push(burger);
+  }
+}
+
+function drawBurger(){
+  burgers.forEach((burger, index_burger) =>{
+    burger.draw();
+    if(bike.collision(burger)){
+      console.log("ñomñom");
+      burgers.splice(index_burger,1);
+      bike.hungry += 1
+      console.log(`${bike.hungry} hamburgesas`)
+      // requestID = undefined
+    }
+    if(burger.y + burger.height >= 1350){
+      burgers.splice(index_burger, 1);
+    }
+  })
+}
 // EMPEZAR JUEGO
-function startGame() {
+function startGame(){
   console.log("start")
   requestID = requestAnimationFrame(updateCanvas)
 }
 
+//Status vida
+function checkStatus(){
+  if(bike.life < 0){
+    city.gameOver()
+    bike.life = 0
+    requestAnimationFrame = null
+  }
+ }
 
-function updateCanvas() {
+//Feedback vida
+function vidas(){
+ const vida = new Image()
+ vida.src = "/assets/images/life.png"
+ ctx.drawImage(vida,15,15,70,70)
+ ctx.fillStyle = "white"
+ ctx.font = "50px Arial"
+ ctx.fillText(`x ${bike.life}`, 100,70)
+}
+
+function checkBurger(){
+  if(bike.hungry > 10){
+    city.win()
+    requestAnimationFrame = null
+  }
+}
+
+function burgerIcon(){
+  const hamburguer = new Image()
+  hamburguer.src = "/assets/images/burger.png"
+  ctx.drawImage(hamburguer,710,25,70,70)
+  ctx.fillStyle = "white"
+  ctx.font = "50px Arial"
+  ctx.fillText(`${bike.hungry} x`, 610,70)
+}
+
+function updateCanvas(){
     frames++;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     piso.draw()
     lines.draw()
-    generateObstacles();
-    drawObstacles();
+    generateObstacles()
+    drawObstacles()
     generateHoles()
     drawHoles()
     generateBottles()
     drawBottles()
+    generateBurgers()
+    drawBurger()
     city.draw()
     bike.draw()
     checkStatus()
+    vidas()
+    checkBurger()
+    burgerIcon()
 
 
 if(requestID){
@@ -327,14 +402,6 @@ if(requestID){
     }   
   }
 
-  //STATUS VIDA
-  
-   function checkStatus(){
-     if(bike.life <0){
-       city.gameOver()
-       requestAnimationFrame = null
-     }
-   }
 
   // Event listener Bike
   addEventListener('keydown', (event) =>{
