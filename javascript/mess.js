@@ -21,6 +21,9 @@ const imageRecovery = [
 ]
 const bottles = []
 
+const imageHoles = [ "/assets/images/hole.png" ]
+const holes = []
+
 //SECCION DE CLASES
 
 class Piso{
@@ -167,29 +170,11 @@ class Weapons {
   }
 }
 
-// class Holes {
-//   constructor(x,y,w,h,img){
-//     this.x = x;
-//     this.y = y;
-//     this.width = w;
-//     this.height = h;
-//     this.image = new Image();
-//     this.image.src = "/assets/images/agua.png";
-//   }
-//    // metodos
-//   draw(){
-//     this.y += 2
-//     ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
-//   }
-//   collision(item){
-//     return(
-//       this.x < item.x + item.width &&
-//       this.x + this.width > item.x &&
-//       this.y < item.y + item.height &&
-//       this.y + this.height > item.y
-//     )
-//   }
-// }
+class Holes extends Obstacles{
+  constructor(x,y,w,h,img){
+    super(x,y,w,h,img)
+  }
+}
 
 class Recovery {
   constructor(x,y,w,h,img){
@@ -288,6 +273,32 @@ function drawBottles(){
   })
 }
 
+function generateHoles(){
+  if (frames % 200 === 0){
+    let x = Math.floor(Math.random() * (740 - 140) + 10);
+    let imgRand = Math.floor(Math.random() * imageHoles.length);
+    const hole = new Holes(x, 400,150,90 ,imageHoles[imgRand]);
+    holes.push(hole);
+  }
+}
+
+function drawHoles(){
+  holes.forEach((hole, index_hole) =>{
+    hole.draw();
+    if(bike.collision(hole)){
+      console.log("ouch");
+      holes.splice(index_hole,1);
+      bike.life -= 4;
+      console.log(bike.life)
+      // requestID = undefined;
+      // fondo.gameOver();
+    }
+    //sacar los obstaculos cuando ya no están en el canvas
+    if (hole.y + hole.height >= 1350){
+      holes.splice(index_hole, 1);
+    }
+  })
+}
 // EMPEZAR JUEGO
 function startGame() {
   console.log("start")
@@ -302,6 +313,8 @@ function updateCanvas() {
     lines.draw()
     generateObstacles();
     drawObstacles();
+    generateHoles()
+    drawHoles()
     generateBottles()
     drawBottles()
     city.draw()
