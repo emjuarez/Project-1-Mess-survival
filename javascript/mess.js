@@ -1,17 +1,18 @@
+//Conexion para canvas
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext("2d");
+const buttonStart = document.getElementById("play")
 
+//Variables globales
 let frames = 0;
-
+let requestID;
 const imageObstacles = [
   "/assets/images/carone.png",
   "/assets/images/cartwo.png",
-  "/assets/images/hole.png",
+  // "/assets/images/hole.png",
 ]
-const obstacles= []
 
-
-
+const obstacles=[]
 let weapons = [];
 
 const imageRecovery = [
@@ -19,8 +20,6 @@ const imageRecovery = [
   "/assets/images/agua2.png",
 ]
 const bottles = []
-
-let animationFrame = null
 
 //SECCION DE CLASES
 
@@ -33,53 +32,53 @@ class Piso{
         this.image = new Image();
         this.image.src = "assets/images/piso.png"
     }
-
     // metodos
-
     draw(){
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height) 
     }
-
 }
-
 class City{
-    constructor(){
+    constructor(){ 
         this.x = 0;
         this.y = 0;
         this.width = canvas.width;
         this.height = 510;
         this.image = new Image();
         this.image.src = "/assets/images/ciudad.png"
+        this.image2 = new Image
+        this.image2.src = "/assets/images/loose.png"
+        this.image3 = new Image()
+        this.image3.src = "/assets/images/win.png"
     }
     // Metodos
     draw(){
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height) 
     }
     gameOver() {
-      ctx.font = "50px Arial";
-      ctx.fillText("GAMEOVER", 250, 700);
-  }
+        ctx.drawImage(this.image2, 100, 100, 570, 350)
+        }
+    delivered(){
+        ctx.drawImage(this.image3, 100, 100, 570, 350)
+    }
+
 }
-
-// class House {
-//     constructor(){
-//         this.x = 340;
-//         this.y = 1010;
-//         this.width = 190 ;
-//         this.height = 190;
-//         this.image = new Image();
-//         this.image.src = "/assets/images/casa.png"
-//     }
-//     draw() {
-//         this.y --;
-//         if(this.y < 319) {
-//           this.y =319;
-//         }
-//         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-//       }
-
-// }
-
+class House {
+    constructor(){
+        this.x = 340;
+        this.y = 1010;
+        this.width = 190 ;
+        this.height = 190;
+        this.image = new Image();
+        this.image.src = "/assets/images/casa.png"
+    }
+    draw() {
+        this.y --;
+        if(this.y < 319) {
+          this.y =319;
+        }
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+      }
+}
 class Lineas {
     constructor(){
         this.x = 0;
@@ -105,7 +104,6 @@ class Lineas {
       )
       }
 }
-
 class Bike {
     constructor(x,y,w,h){
         this.x= x;
@@ -116,12 +114,10 @@ class Bike {
         this.image = new Image();
         this.image.src = "/assets/images/charone.png"
     }
-
     //Metodos
     draw(){
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
     }
-
     collision(item){
       return(
         this.x < item.x + item.width &&
@@ -131,7 +127,6 @@ class Bike {
       )
     }
 }
-
 class Obstacles {
   constructor(x,y,w,h,img){
     this.x = x;
@@ -155,7 +150,6 @@ class Obstacles {
     )
   }
 }
-
 class Weapons {
   constructor (x,y){
     this.x = x;
@@ -172,6 +166,30 @@ class Weapons {
     ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
   }
 }
+
+// class Holes {
+//   constructor(x,y,w,h,img){
+//     this.x = x;
+//     this.y = y;
+//     this.width = w;
+//     this.height = h;
+//     this.image = new Image();
+//     this.image.src = "/assets/images/agua.png";
+//   }
+//    // metodos
+//   draw(){
+//     this.y += 2
+//     ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+//   }
+//   collision(item){
+//     return(
+//       this.x < item.x + item.width &&
+//       this.x + this.width > item.x &&
+//       this.y < item.y + item.height &&
+//       this.y + this.height > item.y
+//     )
+//   }
+// }
 
 class Recovery {
   constructor(x,y,w,h,img){
@@ -204,8 +222,6 @@ const city = new City()
 const lines = new Lineas()
 const bike = new Bike(340, 1011, 135,180)
 
-// const obstacle = new Obstacles(340, 1011, 135,180)
-// const house = new House()
 
 // funciones
 
@@ -222,14 +238,13 @@ function drawObstacles(){
   obstacles.forEach((obstacle, index_obstacle) =>{
     obstacle.draw();
     if(bike.collision(obstacle)){
-      // console.log("ouch");
+      console.log("ouch");
       obstacles.splice(index_obstacle,1);
-      bike.life -= 1
+      bike.life -= 1;
       console.log(bike.life)
-      requestID = undefined;
+      // requestID = undefined;
       // fondo.gameOver();
     }
-
     weapons.forEach((weapon, index_weapon) => {
       weapon.draw();
       if(obstacle.collision(weapon)){
@@ -241,7 +256,6 @@ function drawObstacles(){
         weapons.pop();
       }
     })
-
     //sacar los obstaculos cuando ya no están en el canvas
     if (obstacle.y + obstacle.height >= 1350){
       obstacles.splice(index_obstacle, 1);
@@ -250,7 +264,7 @@ function drawObstacles(){
 }
 
 function generateBottles(){
-  if (frames % 1335 === 0){
+  if (frames % 1737 === 0){
     let x = Math.floor(Math.random() * (740 - 140) + 10);
     let imgRand = Math.floor(Math.random() * imageRecovery.length);
     const bottle = new Recovery(x, 400,70,150 ,imageRecovery[imgRand]);
@@ -258,33 +272,27 @@ function generateBottles(){
   }
 }
 
-
-
 function drawBottles(){
   bottles.forEach((bottle, index_bottle) =>{
     bottle.draw();
     if(bike.collision(bottle)){
       console.log("glulgu");
       bottles.splice(index_bottle,1);
-      bike.life += 1
+      bike.life += 1;
       console.log(bike.life)
-      requestID = undefined
+      // requestID = undefined
+    }
+    if(bottle.y + bottle.height >= 1350){
+      bottles.splice(index_bottle, 1);
     }
   })
 }
 
-//EMPEZAR JUEGO
-
-window.onload = () => {
-  document.getElementById('play-button').onclick = () => {
-      bike.life = 3;
-  startGame();
-  };
-
-  function startGame() {
-     animationFrame = requestAnimationFrame(updateCanvas)
-  }
-};
+// EMPEZAR JUEGO
+function startGame() {
+  console.log("start")
+  requestID = requestAnimationFrame(updateCanvas)
+}
 
 
 function updateCanvas() {
@@ -292,32 +300,30 @@ function updateCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     piso.draw()
     lines.draw()
-    generateObstacles()
-    drawObstacles()
+    generateObstacles();
+    drawObstacles();
     generateBottles()
     drawBottles()
-    checkStatus()
     city.draw()
     bike.draw()
+    checkStatus()
 
-    if(animationFrame){
-      animationFrame = requestAnimationFrame(updateCanvas)
+
+if(requestID){
+    requestID = requestAnimationFrame(updateCanvas)
     }   
-    // requestAnimationFrame(updateCanvas)
   }
 
-  // updateCanvas()
-
-  function checkStatus(){
-    if(bike.life < 0){
-      city.gameOver();  
-      animationFrame = null
-    //   console.log(animationFrame)
+  //STATUS VIDA
+  
+   function checkStatus(){
+     if(bike.life <0){
+       city.gameOver()
+       requestAnimationFrame = null
      }
-  }
+   }
 
-  // Event listener
-
+  // Event listener Bike
   addEventListener('keydown', (event) =>{
  
     if(event.keyCode === 65){
@@ -325,16 +331,17 @@ function updateCanvas() {
         bike.x -=15  
       }   
     }
-
     if(event.keyCode === 68){
       if (bike.x < 560){
         bike.x +=15  
       }
     }
-
     if(event.keyCode === 32){
       const weapon = new Weapons(bike.x, bike.y)
       weapons.push(weapon)
     }
   
   })
+
+  //Event listener Start
+  buttonStart.addEventListener("click",startGame)
