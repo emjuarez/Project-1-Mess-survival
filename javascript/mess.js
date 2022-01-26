@@ -10,7 +10,7 @@ const imageObstacles = [
 ]
 const obstacles= []
 
-let requestId;
+
 
 let weapons = [];
 
@@ -19,6 +19,8 @@ const imageRecovery = [
   "/assets/images/agua2.png",
 ]
 const bottles = []
+
+let animationFrame = null
 
 //SECCION DE CLASES
 
@@ -53,26 +55,30 @@ class City{
     draw(){
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height) 
     }
+    gameOver() {
+      ctx.font = "50px Arial";
+      ctx.fillText("GAMEOVER", 250, 700);
+  }
 }
 
-class House {
-    constructor(){
-        this.x = 340;
-        this.y = 1010;
-        this.width = 190 ;
-        this.height = 190;
-        this.image = new Image();
-        this.image.src = "/assets/images/casa.png"
-    }
-    draw() {
-        this.y --;
-        if(this.y < 319) {
-          this.y =319;
-        }
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-      }
+// class House {
+//     constructor(){
+//         this.x = 340;
+//         this.y = 1010;
+//         this.width = 190 ;
+//         this.height = 190;
+//         this.image = new Image();
+//         this.image.src = "/assets/images/casa.png"
+//     }
+//     draw() {
+//         this.y --;
+//         if(this.y < 319) {
+//           this.y =319;
+//         }
+//         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+//       }
 
-}
+// }
 
 class Lineas {
     constructor(){
@@ -106,6 +112,7 @@ class Bike {
         this.y = y;
         this.width = w;
         this.height = h;
+        this.life = 3
         this.image = new Image();
         this.image.src = "/assets/images/charone.png"
     }
@@ -215,8 +222,10 @@ function drawObstacles(){
   obstacles.forEach((obstacle, index_obstacle) =>{
     obstacle.draw();
     if(bike.collision(obstacle)){
-      console.log("ouch");
+      // console.log("ouch");
       obstacles.splice(index_obstacle,1);
+      bike.life -= 1
+      console.log(bike.life)
       requestID = undefined;
       // fondo.gameOver();
     }
@@ -249,16 +258,34 @@ function generateBottles(){
   }
 }
 
+
+
 function drawBottles(){
   bottles.forEach((bottle, index_bottle) =>{
     bottle.draw();
     if(bike.collision(bottle)){
       console.log("glulgu");
       bottles.splice(index_bottle,1);
+      bike.life += 1
+      console.log(bike.life)
       requestID = undefined
     }
   })
 }
+
+//EMPEZAR JUEGO
+
+window.onload = () => {
+  document.getElementById('play-button').onclick = () => {
+      bike.life = 3;
+  startGame();
+  };
+
+  function startGame() {
+     animationFrame = requestAnimationFrame(updateCanvas)
+  }
+};
+
 
 function updateCanvas() {
     frames++;
@@ -269,16 +296,25 @@ function updateCanvas() {
     drawObstacles()
     generateBottles()
     drawBottles()
+    checkStatus()
     city.draw()
     bike.draw()
-    if(requestId){
-      requestId = requestAnimationFrame(updateCanvas)
+
+    if(animationFrame){
+      animationFrame = requestAnimationFrame(updateCanvas)
     }   
-    requestAnimationFrame(updateCanvas)
+    // requestAnimationFrame(updateCanvas)
   }
 
-  updateCanvas()
+  // updateCanvas()
 
+  function checkStatus(){
+    if(bike.life < 0){
+      city.gameOver();  
+      animationFrame = null
+    //   console.log(animationFrame)
+     }
+  }
 
   // Event listener
 
