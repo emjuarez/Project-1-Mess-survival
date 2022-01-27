@@ -2,6 +2,7 @@
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext("2d");
 const buttonStart = document.getElementById("play")
+// const buttonRetry = document.getElementById("retry")
 
 //Variables globales
 let frames = 0;
@@ -340,6 +341,12 @@ function startGame(){
   console.log("start")
   requestID = requestAnimationFrame(updateCanvas)
 }
+// // retry
+// function retry(){
+//   console.log("retry")
+//   requestID = requestAnimationFrame(updateCanvas)
+// }
+
 
 //Status vida
 function checkStatus(){
@@ -361,7 +368,7 @@ function vidas(){
 }
 
 function checkBurger(){
-  if(bike.hungry > 10){
+  if(bike.hungry === 10){
     city.win()
     requestAnimationFrame = null
   }
@@ -424,4 +431,11 @@ if(requestID){
   })
 
   //Event listener Start
-  buttonStart.addEventListener("click",startGame)
+  // buttonStart.addEventListener("click",startGame)
+  window.onload = function(){
+    startGame()
+  }
+
+  // Event listener retry
+
+  // buttonRetry.addEventListener("click",retry)

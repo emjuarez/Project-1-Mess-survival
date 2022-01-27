@@ -1,0 +1,33 @@
+/* Centrar menu */
+#menu {
+    /* width:100px;
+    height: 200px; */
+    margin-bottom: 40px;
+    display:flex;
+    justify-content:center;
+}
+
+.container{
+    /* margin-bottom: 40px; */
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction: column;
+}
+/* Centrar boton */
+
+/* #play{
+    width: 242px;
+    height: 105px;
+    position: relative;
+    left: 1023px;
+    top: 10px;
+} */
+
+
+
+/* Centrar tablero */
+#game-board{
+    display:flex;
+    justify-content:center;
+}
