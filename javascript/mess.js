@@ -341,12 +341,6 @@ function startGame(){
   console.log("start")
   requestID = requestAnimationFrame(updateCanvas)
 }
-// // retry
-// function retry(){
-//   console.log("retry")
-//   requestID = requestAnimationFrame(updateCanvas)
-// }
-
 
 //Status vida
 function checkStatus(){
@@ -368,7 +362,7 @@ function vidas(){
 }
 
 function checkBurger(){
-  if(bike.hungry === 10){
+  if(bike.hungry === 2){
     city.win()
     requestAnimationFrame = null
   }
@@ -436,6 +430,3 @@ if(requestID){
     startGame()
   }
 
-  // Event listener retry
-
-  // buttonRetry.addEventListener("click",retry)
